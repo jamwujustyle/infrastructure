@@ -1,4 +1,4 @@
 # justfile
 
-run:
+start:
     docker-compose up
