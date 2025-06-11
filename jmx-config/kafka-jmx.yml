@@ -1,0 +1,39 @@
+startDelaySeconds: 0
+hostPort: kafka:9101
+jmxUrl: service:jmx:rmi:///jndi/rmi://kafka:9101/jmxrmi
+ssl: false
+lowercaseOutputName: false
+lowecaseOutputLabelNames: false
+
+rules:
+  - pattern: kafka.controller<type=(.+), name=(.+)><>Value
+    name: kafka_controller_$1_$2
+    type: GAUGE
+
+  - pattern: kafka.server<type=(.+), name=(.+)PerSec\w*><>Count
+    name: kafka_server_$1_$2_total
+    type: COUNTER
+
+  - pattern: kafka.server<type=(.+), name=(.+), topic=(.)><>Value
+    name: kafka_server_$1_$2
+    type: GAUGE
+    labels:
+      topic: "$3"
+
+  - pattern: kafka.server<type=(.+), name=(.+)><>Value
+    name: kafka_server_$1_$2
+    type: GAUGE
+
+  - pattern: kafka.network<type>=(.+), name=(.+)><>Value
+    name: kafka_network_$1_$2
+    type: GAUGE
+
+  - pattern: kafka.log<type=(.+), name=(.+), topic=(.+), partition=(.*)><>Value
+    name: kafka_log_$1_$2
+    type: GAUGE
+    labels:
+      topic: "$3"
+      partition: "$4"
+
+
+  - pattern: ".*"
